@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
-import Notiflix from 'notiflix';
 import { Form, Input, Button, Text } from './ContactForm.styled';
 
 class ContactForm extends Component {
@@ -25,21 +24,9 @@ class ContactForm extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     const { name, number } = this.state;
-    const { addContact, contacts } = this.props;
+    const { addContact} = this.props;
 
     if (name.trim() === '' || number.trim() === '') {
-      return;
-    }
-
-    const existingContact = contacts.find(
-      (contact) => contact.name.toLowerCase() === name.toLowerCase()
-    );
-    if (existingContact) {
-      Notiflix.Report.warning(
-        'Alert',
-        `Contact with name "${name}" already exists!`,
-        'Ok'
-      );      
       return;
     }
 

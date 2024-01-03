@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import ContactForm from "./ContactForm/ContactForm";
-import ContactList from "./ContactList/ContactList"
-import Filter from "./Filter/Filter"
-import { Container, Title, Heading2 } from './App.styled'
+import ContactList from "./ContactList/ContactList";
+import Filter from "./Filter/Filter";
+import { Container, Title, Heading2 } from './App.styled';
+import { nanoid } from 'nanoid';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 class App extends Component {
   state = {
@@ -16,11 +18,19 @@ class App extends Component {
   }
 
   addContact = (newContact) => {
-    this.setState((prevState) => ({
-      contacts: [...prevState.contacts, newContact]
-    }));
-  };
+    const { contacts } = this.state;
 
+    const newName = newContact.name.toLowerCase();
+    const isCheckedContact = contacts.find(({ name }) => name.toLowerCase() === newName);
+
+    if (!isCheckedContact) {
+      newContact.id = nanoid();
+
+      this.setState({ contacts: [...this.state.contacts, newContact] });
+    } else {
+      Notify.failure(`${newContact.name} is already in contacts`);
+    }
+  };
   deleteContact = (id) => {
     this.setState((prevState) => ({
       contacts: prevState.contacts.filter((contact) => contact.id !== id)
@@ -41,12 +51,12 @@ class App extends Component {
   }
 
   render() {
-    const { contacts, filter } = this.state;
+    const { filter } = this.state;
 
     return (
       <Container>
         <Title>Phonebook📱</Title>
-        <ContactForm addContact={this.addContact} contacts={contacts} />
+        <ContactForm addContact={this.addContact} />
 
         <Heading2>Contacts</Heading2>
         <Filter filter={filter} setFilter={this.setFilter} />
